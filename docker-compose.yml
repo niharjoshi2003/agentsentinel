@@ -1,0 +1,35 @@
+services:
+  mock-mcp-server:
+    build:
+      context: .
+      dockerfile: mock_mcp_server/Dockerfile
+    ports:
+      - "9000:9000"
+
+  sentinel-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      MCP_TARGET_URL: http://mock-mcp-server:9000
+      SENTINEL_DB_PATH: /data/sentinel.db
+    ports:
+      - "8001:8001"
+    depends_on:
+      - mock-mcp-server
+    volumes:
+      - sentinel-data:/data
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    environment:
+      BACKEND_URL: http://sentinel-backend:8001
+    ports:
+      - "3000:3000"
+    depends_on:
+      - sentinel-backend
+
+volumes:
+  sentinel-data:

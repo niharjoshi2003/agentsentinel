@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sentinel-panel: #0b1020;
+  --color-sentinel-card: #111a2e;
+  --color-sentinel-border: #1f2c44;
+  --color-sentinel-ink: #e6eefc;
+  --color-accent: #38bdf8;
+  --color-accent2: #22d3ee;
+}
+
+:root {
+  --bg: #05080f;
+  --crit: #f43f5e;
+  --high: #f59e0b;
+  --med: #eab308;
+  --low: #64748b;
+  --clean: #22c55e;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--color-sentinel-ink);
+  background: var(--bg);
+  background-image:
+    radial-gradient(1100px 600px at 12% -8%, rgba(56, 189, 248, 0.12), transparent 60%),
+    radial-gradient(1000px 600px at 100% 0%, rgba(34, 211, 238, 0.08), transparent 55%),
+    radial-gradient(900px 700px at 50% 120%, rgba(34, 197, 94, 0.07), transparent 60%),
+    linear-gradient(180deg, #05080f 0%, #060912 100%);
+  background-attachment: fixed;
+  font-family:
+    "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* faint grid overlay */
+.grid-overlay::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(ellipse at 50% 30%, black 40%, transparent 85%);
+  z-index: 0;
+}
+
+/* glass surface */
+.glass {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.glass-hover {
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.glass-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(56, 189, 248, 0.15);
+}
+
+/* custom scrollbars */
+.scroll-thin::-webkit-scrollbar {
+  width: 8px;
+}
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.22);
+  border-radius: 999px;
+}
+.scroll-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.4);
+}
+
+/* animations */
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+.live-dot {
+  animation: pulse-ring 1.8s infinite;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animate-in {
+  animation: slide-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.drawer-in {
+  animation: drawer-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes sheen {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* severity glow accents (left border + soft glow) */
+.sev-accent {
+  position: relative;
+  overflow: hidden;
+}
+.sev-accent::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 3px;
+}
+.sev-CRITICAL::before { background: var(--crit); box-shadow: 0 0 16px var(--crit); }
+.sev-HIGH::before { background: var(--high); box-shadow: 0 0 16px var(--high); }
+.sev-MEDIUM::before { background: var(--med); box-shadow: 0 0 14px var(--med); }
+.sev-LOW::before { background: var(--low); }
+.sev-CLEAN::before { background: var(--clean); box-shadow: 0 0 14px var(--clean); }
+
+.title-gradient {
+  background: linear-gradient(92deg, #ffffff 0%, #b9e6ff 45%, #5ee0c6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

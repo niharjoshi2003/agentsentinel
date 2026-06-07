@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AgentSentinel — Intro</title>
+<style>
+  :root{
+    --bg0:#070b16; --bg1:#0b1222; --ink:#e8eefc; --muted:#9fb0d0;
+    --cyan:#38e1ff; --violet:#8b7bff; --red:#ff5c7c; --amber:#ffc24b; --green:#3ee6a0;
+    --card:rgba(255,255,255,.04); --line:rgba(255,255,255,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    color:var(--ink); overflow:hidden;
+    background:
+      radial-gradient(1100px 600px at 18% -10%, rgba(56,225,255,.16), transparent 60%),
+      radial-gradient(1000px 620px at 88% 8%, rgba(139,123,255,.18), transparent 60%),
+      linear-gradient(180deg,var(--bg1),var(--bg0));
+  }
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+    background-size:46px 46px;
+    mask-image:radial-gradient(900px 600px at 50% 40%,#000,transparent 80%);
+  }
+  .stage{position:fixed;inset:0;display:grid;place-items:center;padding:6vh 8vw}
+  .slide{
+    position:absolute; width:84vw; max-width:1180px; text-align:center;
+    opacity:0; transform:translateY(26px) scale(.985);
+    transition:opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1);
+    pointer-events:none;
+  }
+  .slide.active{opacity:1; transform:none}
+  .kicker{
+    display:inline-block; letter-spacing:.32em; text-transform:uppercase;
+    font-size:13px; color:var(--cyan); font-weight:700; margin-bottom:18px;
+    padding:7px 16px; border:1px solid rgba(56,225,255,.3); border-radius:999px;
+    background:rgba(56,225,255,.06);
+  }
+  h1{font-size:74px; line-height:1.04; font-weight:800; letter-spacing:-1px}
+  h2{font-size:46px; line-height:1.12; font-weight:800; letter-spacing:-.5px; margin-bottom:22px}
+  .g{background:linear-gradient(100deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:24px; color:var(--muted); margin-top:22px; line-height:1.5; font-weight:500}
+  .by{margin-top:30px; font-size:18px; color:var(--ink); opacity:.85}
+  .by b{color:var(--cyan)}
+  .mark{width:120px;height:120px;margin:0 auto 26px;display:grid;place-items:center;
+    border-radius:28px;border:1px solid var(--line);
+    background:linear-gradient(160deg,rgba(56,225,255,.16),rgba(139,123,255,.16));
+    box-shadow:0 0 60px rgba(56,225,255,.25);}
+  .mark svg{width:64px;height:64px}
+  .rows{display:flex;flex-direction:column;gap:14px;max-width:880px;margin:0 auto;text-align:left}
+  .row{display:flex;gap:16px;align-items:flex-start;padding:16px 20px;border:1px solid var(--line);
+    border-radius:16px;background:var(--card);font-size:21px;line-height:1.45;
+    opacity:0;transform:translateX(-16px);transition:.6s ease}
+  .slide.active .row{opacity:1;transform:none}
+  .slide.active .row:nth-child(2){transition-delay:.18s}
+  .slide.active .row:nth-child(3){transition-delay:.36s}
+  .slide.active .row:nth-child(4){transition-delay:.54s}
+  .dot{flex:0 0 auto;width:14px;height:14px;border-radius:50%;margin-top:7px;box-shadow:0 0 14px currentColor}
+  .row b{font-weight:700}
+  .grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:920px;margin:0 auto;text-align:left}
+  .card{padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--card);
+    opacity:0;transform:translateY(16px);transition:.6s ease}
+  .slide.active .card{opacity:1;transform:none}
+  .slide.active .card:nth-child(2){transition-delay:.12s}
+  .slide.active .card:nth-child(3){transition-delay:.24s}
+  .slide.active .card:nth-child(4){transition-delay:.36s}
+  .card h3{font-size:22px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .card p{color:var(--muted);font-size:17px;line-height:1.45}
+  .pill{display:inline-block;width:11px;height:11px;border-radius:50%;box-shadow:0 0 12px currentColor}
+  .flow{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:34px;flex-wrap:wrap}
+  .node{padding:18px 26px;border-radius:16px;border:1px solid var(--line);background:var(--card);
+    font-size:21px;font-weight:700;opacity:0;transform:scale(.9);transition:.55s ease}
+  .slide.active .node{opacity:1;transform:none}
+  .slide.active .node:nth-child(3){transition-delay:.2s}
+  .slide.active .node:nth-child(5){transition-delay:.4s}
+  .node.sentinel{border-color:rgba(56,225,255,.5);background:linear-gradient(160deg,rgba(56,225,255,.14),rgba(139,123,255,.14));box-shadow:0 0 40px rgba(56,225,255,.3)}
+  .arrow{font-size:30px;color:var(--cyan);opacity:0;transition:.55s ease .3s}
+  .slide.active .arrow{opacity:.9}
+  .progress{position:fixed;top:0;left:0;height:4px;width:0;
+    background:linear-gradient(90deg,var(--cyan),var(--violet));box-shadow:0 0 18px var(--cyan);
+    transition:width .25s linear;z-index:10}
+  .brandfoot{position:fixed;bottom:26px;left:0;right:0;text-align:center;color:var(--muted);
+    font-size:14px;letter-spacing:.18em;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="progress" id="bar"></div>
+<div class="stage" id="stage">
+
+  <section class="slide" data-i="0">
+    <div class="mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="url(#gg)" stroke-width="1.6">
+        <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#38e1ff"/><stop offset="1" stop-color="#8b7bff"/></linearGradient></defs>
+        <path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5l8-3z"/>
+        <path d="M9 12l2 2 4-4"/>
+      </svg>
+    </div>
+    <h1><span class="g">AgentSentinel</span></h1>
+    <p class="sub">Runtime security monitoring for AI agents that use tools.</p>
+    <p class="by">Microsoft Hackathon · Built by <b>Nihar Joshi</b></p>
+  </section>
+
+  <section class="slide" data-i="1">
+    <span class="kicker">The shift</span>
+    <h2>AI agents no longer just talk — <span class="g">they act</span>.</h2>
+    <div class="rows">
+      <div class="row"><span class="dot" style="color:var(--cyan)"></span><div>Modern agents connect to tools through <b>MCP</b> — they read files, call APIs, query databases and send data on their own.</div></div>
+      <div class="row"><span class="dot" style="color:var(--violet)"></span><div>That power is the point — but every tool call is also a way the agent can be <b>tricked or hijacked</b>.</div></div>
+      <div class="row"><span class="dot" style="color:var(--amber)"></span><div>Today this traffic flows <b>completely unmonitored</b>. Nobody is watching what the agent is actually doing.</div></div>
+    </div>
+  </section>
+
+  <section class="slide" data-i="2">
+    <span class="kicker">The problem</span>
+    <h2>Agents trust <span class="g">whatever flows through them</span>.</h2>
+    <div class="grid4">
+      <div class="card"><h3><span class="pill" style="color:var(--red)"></span>Prompt injection</h3><p>Hidden instructions inside a web page or file hijack the agent's goals.</p></div>
+      <div class="card"><h3><span class="pill" style="color:var(--violet)"></span>Identity spoofing</h3><p>A message pretends to come from a trusted agent that was never verified.</p></div>
+      <div class="card"><h3><span class="pill" style="color:var(--amber)"></span>Data exfiltration</h3><p>A secret is read, then quietly shipped out to an external endpoint.</p></div>
+      <div class="card"><h3><span class="pill" style="color:var(--green)"></span>Privilege escalation</h3><p>A chain of innocent-looking calls adds up to one dangerous action.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-i="3">
+    <span class="kicker">The idea</span>
+    <h2>A <span class="g">transparent guard</span> between the agent and its tools.</h2>
+    <p class="sub">AgentSentinel sits in the middle as a proxy. It sees every request and every
+    response, scores the risk, and raises alerts — <b>without ever changing how the agent behaves</b>.</p>
+    <div class="flow">
+      <div class="node">AI&nbsp;Agent</div>
+      <div class="arrow">→</div>
+      <div class="node sentinel">AgentSentinel</div>
+      <div class="arrow">→</div>
+      <div class="node">Tools&nbsp;/&nbsp;MCP</div>
+    </div>
+  </section>
+
+  <section class="slide" data-i="4">
+    <span class="kicker">What it does</span>
+    <h2>Four detectors, one <span class="g">live trust graph</span>.</h2>
+    <div class="grid4">
+      <div class="card"><h3><span class="pill" style="color:var(--red)"></span>Detect</h3><p>Four engines flag prompt injection, spoofing, exfiltration and privilege-escalation chains in real time.</p></div>
+      <div class="card"><h3><span class="pill" style="color:var(--cyan)"></span>Map</h3><p>A trust graph draws the agent, the tools it touched, and external domains — risky links glow red.</p></div>
+      <div class="card"><h3><span class="pill" style="color:var(--violet)"></span>Explain</h3><p>Every alert opens to show which detector fired, its confidence, and the exact evidence.</p></div>
+      <div class="card"><h3><span class="pill" style="color:var(--green)"></span>Persist</h3><p>Sessions and events are stored, scored and streamed live to the dashboard via SSE.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" data-i="5">
+    <span class="kicker">Now watch it work</span>
+    <h2>Let's send <span class="g">live attack traffic</span> through it.</h2>
+    <p class="sub">In the next minute you'll see AgentSentinel catch four real attacks as they happen —
+    then we'll open the trust graph and the per-event reasoning.</p>
+    <p class="by">▶ &nbsp;Live demo starting…</p>
+  </section>
+
+</div>
+<div class="brandfoot">AgentSentinel · Runtime security for agentic AI</div>
+
+<script>
+  // start(seconds) for each slide; total ~90s
+  var schedule = [0, 13, 29, 45, 61, 77];
+  var TOTAL = 90;
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var bar = document.getElementById('bar');
+  function show(i){ slides.forEach(function(s,k){ s.classList.toggle('active', k===i); }); }
+  function run(){
+    var t0 = performance.now();
+    show(0);
+    schedule.forEach(function(sec, i){ if(i>0) setTimeout(function(){ show(i); }, sec*1000); });
+    function tick(){
+      var el = (performance.now()-t0)/1000;
+      bar.style.width = Math.min(100, (el/TOTAL)*100) + '%';
+      if(el < TOTAL+1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  window.addEventListener('load', function(){ setTimeout(run, 300); });
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "list_files": ["read_file"],
+    "read_file": ["summarize", "redact", "write_file"],
+    "summarize": ["http_request", "send_email", "write_file"],
+    "redact": ["http_request", "send_email", "write_file"],
+    "execute_code": ["summarize", "write_file"],
+    "fetch_url": ["summarize", "read_file"],
+    "http_request": [],
+    "send_email": [],
+    "write_file": []
+  }
+}
