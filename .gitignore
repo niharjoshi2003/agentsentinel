@@ -18,6 +18,9 @@ frontend/dist/
 frontend/.vite/
 *.log
 
+# Built frontend copied into the backend image at deploy time
+/static/
+
 # Env / secrets
 .env
 .env.*

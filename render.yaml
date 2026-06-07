@@ -1,0 +1,17 @@
+# Render Blueprint — deploys AgentSentinel as a single Docker web service.
+# Use: Render Dashboard → New → Blueprint → connect niharjoshi2003/agentsentinel.
+services:
+  - type: web
+    name: agentsentinel
+    runtime: docker
+    repo: https://github.com/niharjoshi2003/agentsentinel
+    plan: free
+    dockerfilePath: ./Dockerfile.web
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: MCP_TARGET_URL
+        value: http://127.0.0.1:9000
+      - key: SENTINEL_DB_PATH
+        value: /tmp/sentinel.db

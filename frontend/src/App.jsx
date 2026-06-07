@@ -5,7 +5,7 @@ import SessionPanel from "./components/SessionPanel.jsx";
 import ThreatStats from "./components/ThreatStats.jsx";
 import TrustGraph from "./components/TrustGraph.jsx";
 import { ShieldLogo } from "./components/icons.jsx";
-import { getJson } from "./api.js";
+import { getJson, postJson } from "./api.js";
 
 export default function App() {
   const [sessions, setSessions] = useState([]);
@@ -13,6 +13,18 @@ export default function App() {
   const [selectedSession, setSelectedSession] = useState(null);
   const [events, setEvents] = useState([]);
   const [drawerEvent, setDrawerEvent] = useState(null);
+  const [demoRunning, setDemoRunning] = useState(false);
+
+  async function runDemo() {
+    if (demoRunning) return;
+    setDemoRunning(true);
+    try {
+      await postJson("/api/demo/run");
+    } catch (error) {
+      console.error(error);
+    }
+    setTimeout(() => setDemoRunning(false), 11000);
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -82,11 +94,20 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={runDemo}
+                  disabled={demoRunning}
+                  className="flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-400/15 px-4 py-1.5 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/25 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <span className={`h-2 w-2 rounded-full bg-cyan-300 ${demoRunning ? "live-dot" : ""}`} />
+                  {demoRunning ? "Running attacks…" : "Run demo attacks"}
+                </button>
                 <div className="hidden items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1.5 text-xs font-medium text-emerald-300 sm:flex">
                   <span className="live-dot h-2 w-2 rounded-full bg-emerald-400" />
                   Monitoring live
                 </div>
-                <div className="max-w-[260px] truncate rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-1.5 text-sm text-cyan-100">
+                <div className="hidden max-w-[220px] truncate rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-1.5 text-sm text-cyan-100 lg:block">
                   {selectedSession || "waiting for sessions"}
                 </div>
               </div>

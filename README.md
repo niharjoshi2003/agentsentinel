@@ -94,6 +94,34 @@ python demo/attacks.py
 Each attack runs in its own session (Attack 3 is a single multi-step session) so
 the dashboard's session panel shows four clean, focused threat stories.
 
+## Deploy a public demo (single URL)
+
+For a shareable demo link, `Dockerfile.web` builds **one** image that serves the
+React frontend, the API + SSE stream, and bundles the mock MCP server — so the
+whole thing runs on a single port/URL. Open the link and click **“Run demo
+attacks”** in the header to populate the dashboard live (no local scripts).
+
+### Render (recommended, free)
+
+1. Push this repo to GitHub (already at `niharjoshi2003/agentsentinel`).
+2. Render Dashboard → **New → Blueprint** → connect the repo. Render reads
+   [`render.yaml`](./render.yaml) and provisions the Docker web service.
+3. Wait for the build; your link is `https://agentsentinel.onrender.com` (free
+   instances cold-start after idle — first hit can take ~50s).
+
+Or without the blueprint: New → **Web Service** → Docker → Dockerfile path
+`./Dockerfile.web`. Render injects `PORT`; the app binds to it automatically.
+
+### Build/run the single image anywhere
+
+```bash
+docker build -f Dockerfile.web -t agentsentinel .
+docker run -p 8001:8001 agentsentinel
+# open http://localhost:8001  →  click "Run demo attacks"
+```
+
+Works the same on Azure Container Apps, Fly.io, Railway, or any container host.
+
 ## Configuration files
 
 - `agents.json` — registry of trusted agent identities (empty by default).

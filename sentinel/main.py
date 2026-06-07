@@ -2,13 +2,16 @@ from __future__ import annotations
 
 import asyncio
 import json
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from sentinel.demo_runner import run_demo
 from sentinel.detectors import AgentRegistry
 from sentinel.event_bus import threat_bus
 from sentinel.proxy import router as proxy_router
@@ -108,3 +111,18 @@ async def mark_safe(event_id: int) -> dict[str, Any]:
 async def block_tool(payload: BlockToolRequest) -> dict[str, Any]:
     blocked_tools.add(payload.tool_name)
     return {"blocked_tools": sorted(blocked_tools)}
+
+
+@app.post("/api/demo/run")
+async def run_demo_endpoint() -> dict[str, str]:
+    """Replay the four attack scenarios in the background so the live feed lights up."""
+    asyncio.create_task(run_demo())
+    return {"status": "started"}
+
+
+# Serve the built React frontend (when present) from the same origin as the API,
+# so the dashboard, /api routes, and the SSE stream all share one URL in production.
+# Registered last so explicit API routes always take precedence over the static mount.
+_static_dir = Path(__file__).resolve().parent.parent / "static"
+if _static_dir.is_dir():
+    app.mount("/", StaticFiles(directory=str(_static_dir), html=True), name="frontend")

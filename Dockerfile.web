@@ -1,0 +1,29 @@
+# All-in-one image for a single public demo URL (Render / any container host).
+# Stage 1: build the React frontend.
+FROM node:20-slim AS frontend
+WORKDIR /fe
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
+
+# Stage 2: Python runtime that serves the API + the built frontend + bundles the mock MCP server.
+FROM python:3.12-slim
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY sentinel ./sentinel
+COPY mock_mcp_server ./mock_mcp_server
+COPY agents.json tool_permissions.json ./
+COPY --from=frontend /fe/dist ./static
+COPY start.sh ./start.sh
+RUN chmod +x start.sh
+
+ENV MCP_TARGET_URL=http://127.0.0.1:9000
+ENV SENTINEL_DB_PATH=/tmp/sentinel.db
+ENV PORT=8001
+
+EXPOSE 8001
+CMD ["/bin/sh", "./start.sh"]
